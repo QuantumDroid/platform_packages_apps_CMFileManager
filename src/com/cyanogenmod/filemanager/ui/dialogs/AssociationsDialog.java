@@ -169,10 +169,12 @@ public class AssociationsDialog implements OnItemClickListener {
                                         ri, AssociationsDialog.this.mRequestIntent);
 
                         // Open the intent (and remember the action is the check is marked)
-                        onIntentSelected(
-                                ri,
-                                intent,
-                                AssociationsDialog.this.mRemember.isChecked());
+                        if (intent != null) {
+                            onIntentSelected(
+                                    ri,
+                                    intent,
+                                    AssociationsDialog.this.mRemember.isChecked());
+                        }
                     }
                 });
         this.mDialog.setButton(
