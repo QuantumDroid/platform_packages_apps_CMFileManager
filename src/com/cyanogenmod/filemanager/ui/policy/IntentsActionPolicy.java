@@ -406,12 +406,15 @@ public final class IntentsActionPolicy extends ActionsPolicy {
         // resolved activity if the activity is a preferred activity. Other case, the
         // resolved activity was never added by addPreferredActivity
         ResolveInfo mPreferredInfo = findPreferredActivity(ctx, intent, info);
-
+        Intent tmpIntent;
         // Is a simple open and we have an application that can handle the file?
         //---
         // If we have a preferred application, then use it
         if (!choose && (mPreferredInfo  != null && mPreferredInfo.match != 0)) {
-            ctx.startActivity(getIntentFromResolveInfo(mPreferredInfo, intent));
+            tmpIntent = getIntentFromResolveInfo(mPreferredInfo, intent);
+            if (tmpIntent != null) {
+                ctx.startActivity(tmpIntent);
+            }
             if (onDismissListener != null) {
                 onDismissListener.onDismiss(null);
             }
@@ -420,7 +423,10 @@ public final class IntentsActionPolicy extends ActionsPolicy {
         // If there are only one activity (app or internal editor), then use it
         if (!choose && info.size() == 1) {
             ResolveInfo ri = info.get(0);
-            ctx.startActivity(getIntentFromResolveInfo(ri, intent));
+            tmpIntent = getIntentFromResolveInfo(ri, intent);
+            if (tmpIntent != null) {
+                ctx.startActivity(tmpIntent);
+            }
             if (onDismissListener != null) {
                 onDismissListener.onDismiss(null);
             }
@@ -537,6 +543,8 @@ public final class IntentsActionPolicy extends ActionsPolicy {
      * @return Intent The intent
      */
     public static final Intent getIntentFromResolveInfo(ResolveInfo ri, Intent request) {
+        if (ri.activityInfo == null)
+            return null;
         String cn = ri.activityInfo.applicationInfo.packageName;
         Intent intent =
                 getIntentFromComponentName(
